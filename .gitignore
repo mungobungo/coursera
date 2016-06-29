@@ -1,0 +1,11 @@
+*/.idea/
+.idea/
+parallel_scala/reductions/project/project/target/
+parallel_scala/reductions/project/target/
+parallel_scala/reductions/target/
+parallel_scala/barneshut/project/project/target/
+parallel_scala/barneshut/project/target/
+parallel_scala/barneshut/target/
+parallel_scala/kmeans/project/project/target/
+parallel_scala/kmeans/project/target/
+parallel_scala/kmeans/target/
