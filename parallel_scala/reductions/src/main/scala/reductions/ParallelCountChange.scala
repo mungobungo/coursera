@@ -71,13 +71,9 @@ object ParallelCountChange {
       return 0
 
     if (threshold(money, coins)) {
+    val (a, b) = parallel(parCountChange(money - coins.head, coins, threshold), parCountChange(money, coins.tail, threshold))
 
-      val t1 = task(parCountChange(money - coins.head, coins, threshold))
-      val t2 = task(parCountChange(money, coins.tail, threshold))
-
-      val (a, b) = parallel(t1, t2)
-
-      a.getRawResult + b.getRawResult
+      a + b
     }
     else {
 

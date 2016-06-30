@@ -57,19 +57,41 @@ object ParallelParenthesesBalancing {
     pars == 0
   }
 
+  def countPars(chars: Array[Char], idx: Int, until: Int): Int =  {
+    var pars = 0
+    for (x<- idx to until){
+      if(x == '(') {
+        pars += 1
+      }
+      if(x == ')') {
+        pars -= 1
+      }
+    }
+    pars
+  }
+
   /** Returns `true` iff the parentheses in the input `chars` are balanced.
    */
   def parBalance(chars: Array[Char], threshold: Int): Boolean = {
 
     def traverse(idx: Int, until: Int, arg1: Int, arg2: Int) /*: ???*/ = {
-      ???
+      if(chars.length > threshold)
+        {
+
+          val middle = (until - idx) /2
+          val (a, b) = parallel( countPars(chars, idx, until -middle), countPars(chars, until- middle, until))
+          a+b
+        }else
+        {
+          countPars(chars, idx, until)
+        }
     }
 
     def reduce(from: Int, until: Int) /*: ???*/ = {
-      ???
+      traverse(from, until, 0, 0)
     }
 
-    reduce(0, chars.length) == ???
+    reduce(0, chars.length) == 0
   }
 
   // For those who want more:
