@@ -101,7 +101,7 @@ object LineOfSight {
    */
   def downsweep(input: Array[Float], output: Array[Float], startingAngle: Float,
     tree: Tree): Unit = {
-    ???
+   downsweepSequential(input, output, startingAngle, 0, input.length)
   }
 
   /** Compute the line-of-sight in parallel. */
