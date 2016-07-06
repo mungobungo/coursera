@@ -15,7 +15,8 @@ import KM._
 class KMeansSuite extends FunSuite {
 
   def checkClassify(points: GenSeq[Point], means: GenSeq[Point], expected: GenMap[Point, GenSeq[Point]]) {
-    assert(classify(points, means) == expected,
+    val happened = classify(points, means)
+    assert(happened == expected,
       s"classify($points, $means) should equal to $expected")
   }
 
