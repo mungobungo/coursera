@@ -169,7 +169,7 @@ package object barneshut {
       }
 
       def traverse(quad: Quad): Unit = (quad: Quad) match {
-        case Empty(_, _, _) =>  quad
+        case Empty(_, _, _) =>  Unit
 
         case Leaf(_, _, _, bodies) =>
           bodies.foreach( b => addForce(b.mass, b.x, b.y))
@@ -201,7 +201,7 @@ package object barneshut {
   class SectorMatrix(val boundaries: Boundaries, val sectorPrecision: Int) {
     val sectorSize = boundaries.size / sectorPrecision
     val matrix = new Array[ConcBuffer[Body]](sectorPrecision * sectorPrecision)
-    for (i <- 0 until matrix.length) matrix(i) = new ConcBuffer
+    for (i <- matrix.indices) matrix(i) = new ConcBuffer
 
     def scale(n: Float, min : Float, max : Float) :Float = {
       if(n < min) {
@@ -217,17 +217,18 @@ package object barneshut {
       val scaledy = scale(b.y, boundaries.minY, boundaries.maxY) / sectorSize
       val scaledx = scale(b.x, boundaries.minX, boundaries.maxX) / sectorSize
 
-      val position =  (Math.floor(scaledy) * sectorSize + Math.floor(scaledx)).toInt
+      val position =  (Math.floor(scaledy) * sectorPrecision + Math.floor(scaledx)).toInt
 
       val upd = matrix(position).+=(b)
       matrix.update(position, upd)
       this
     }
 
-    def apply(x: Int, y: Int) = matrix(y * Math.floor(sectorSize).toInt + x)
+    def apply(x: Int, y: Int) =
+      matrix(y * Math.floor(sectorPrecision).toInt + x)
 
     def combine(that: SectorMatrix): SectorMatrix = {
-      for (i <- 0 until matrix.length) {
+      for (i <- matrix.indices) {
         val joined = matrix(i).combine(that.matrix(i))
         matrix.update(i, joined)
       }
@@ -279,7 +280,7 @@ package object barneshut {
       val totalTime = /*measure*/ {
         val startTime = System.currentTimeMillis()
         res = body
-        (System.currentTimeMillis() - startTime)
+        System.currentTimeMillis() - startTime
       }
 
       timeMap.get(title) match {
@@ -287,14 +288,14 @@ package object barneshut {
         case None => timeMap(title) = (0.0, 0)
       }
 
-      println(s"$title: ${totalTime} ms; avg: ${timeMap(title)._1 / timeMap(title)._2}")
+      println(s"$title: $totalTime ms; avg: ${timeMap(title)._1 / timeMap(title)._2}")
       res
     }
 
     override def toString = {
       timeMap map {
         case (k, (total, num)) => k + ": " + (total / num * 100).toInt / 100.0 + " ms"
-      } mkString("\n")
+      } mkString "\n"
     }
   }
 }

@@ -180,7 +180,7 @@ import FloatOps._
     boundaries.maxY = 97
     val sm = new SectorMatrix(boundaries, SECTOR_PRECISION)
     sm += body
-    val res = sm(2, 3).size == 1 && sm(2, 3).find(_ == body).isDefined
+    val res = sm(2, 3).size == 1 && sm(2, 3).exists(_ == body)
     assert(res, s"Body not found in the right sector")
   }
 
@@ -196,7 +196,7 @@ import FloatOps._
     boundaries.maxY = 97
     val sm = new SectorMatrix(boundaries, SECTOR_PRECISION)
     sm += body
-    val res = sm(2, 3).size == 1 && sm(2, 3).find(_ == body).isDefined
+    val res = sm(2, 3).size == 1 && sm(2, 3).exists(_ == body)
     assert(res, s"Body not found in the right sector")
 
     val body2 = new Body(5, 25.1f, 47.1f, 0.1f, 0.1f)
@@ -207,7 +207,7 @@ import FloatOps._
     boundaries2.maxY = 97
     val sm2 = new SectorMatrix(boundaries2, SECTOR_PRECISION)
     sm2 += body2
-    val res2 = sm2(2, 3).size == 1 && sm2(2, 3).find(_ == body2).isDefined
+    val res2 = sm2(2, 3).size == 1 && sm2(2, 3).exists(_ == body2)
     assert(res2, s"Body not found in the right sector")
 
     val combined = sm.combine(sm2)
@@ -233,6 +233,24 @@ import FloatOps._
     assert(quad.total == 1, s"${quad.total} should be 1")
   }
 
+
+//    [Test Description] 'SectorMatrix.+=' should add a body at (25,47) to the correct bucket of a sector matrix of size 100
+//  [Observed Error] res was false Body not found in the right sector. Hint: sector sizes could be fractions
+//    [Lost Points] 2
+
+  test("'SectorMatrix.+=' should add a body at (25,47) to the correct bucket of a sector matrix of size 100") {
+    val body = new Body(5, 25, 47, 0.1f, 0.1f)
+    val boundaries = new Boundaries()
+    boundaries.minX = 1
+    boundaries.minY = 1
+    boundaries.maxX = 101
+    boundaries.maxY = 101
+    val sm = new SectorMatrix(boundaries, 10)
+    sm += body
+    val res = sm(2, 4).size == 1 && sm(2, 4).exists(_ == body)
+    assert(res, s"Body not found in the right sector")
+
+  }
   //  [Test Description] 'insert' should work correctly on a leaf with center (1,1) and size 2
   //  [Observed Error]
   //  expected
