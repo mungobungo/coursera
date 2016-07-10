@@ -58,9 +58,15 @@ package object barneshut {
     val centerY: Float = nw.centerY + nw.size /2
     val size: Float = nw.size * 2
     val mass: Float = ne.mass + nw.mass + se.mass + sw.mass
-    val massX: Float = (ne.massX * ne.mass + nw.massX * nw.mass + sw.massX * sw.mass + se.massX * se.mass) /mass
-    val massY: Float = (ne.massY * ne.mass + nw.massY * nw.mass + sw.massY * sw.mass + se.massY * se.mass) /mass
-    val total: Int = nw.total + ne.total + sw.total + sw.total
+    val massX: Float = if(mass == 0)
+                          0
+                      else
+                         (ne.massX * ne.mass + nw.massX * nw.mass + sw.massX * sw.mass + se.massX * se.mass) /mass
+    val massY: Float = if(mass == 0)
+                        0
+                      else
+                        (ne.massY * ne.mass + nw.massY * nw.mass + sw.massY * sw.mass + se.massY * se.mass) /mass
+    val total: Int = nw.total + ne.total + se.total + sw.total
 
     def insert(b: Body): Fork = {
       if(b.x <= centerX && b.y <= centerY)
@@ -86,9 +92,43 @@ package object barneshut {
     val total: Int = bodies.length
     def insert(b: Body): Quad =
       if(size > minimumSize) {
-        val em = Empty(b.x, b.y, size)
-        em.insert(b)
-        em
+
+
+        val delta = size/2
+        if(b.x < centerX && b.y < centerY) {
+          val nw = Leaf(centerX - delta, centerY - delta, delta, Seq(b))
+          val ne = Empty(centerX + delta, centerY - delta, delta)
+          val sw = Empty(centerX - delta, centerY + delta, delta)
+          val se = Empty(centerX + delta, centerY + delta, delta)
+
+          Fork(nw, ne, sw, se)
+        }
+
+        if(b.x >= centerX && b.y < centerY) {
+          val nw = Empty(centerX - delta, centerY - delta, delta)
+          val ne = Leaf(centerX + delta, centerY - delta, delta, Seq(b))
+          val sw = Empty(centerX - delta, centerY + delta, delta)
+          val se = Empty(centerX + delta, centerY + delta, delta)
+
+          Fork(nw, ne, sw, se)
+        }
+        if(b.x < centerX && b.y >= centerY) {
+          val nw = Empty(centerX - delta, centerY - delta, delta)
+          val ne = Empty(centerX + delta, centerY - delta, delta)
+          val sw = Leaf(centerX - delta, centerY + delta, delta,  Seq(b))
+          val se = Empty(centerX + delta, centerY + delta, delta)
+
+          Fork(nw, ne, sw, se)
+        }
+
+        val nw = Empty(centerX - delta, centerY - delta, delta)
+        val ne = Empty(centerX + delta, centerY - delta, delta)
+        val sw = Empty(centerX - delta, centerY + delta, delta)
+        val se = Leaf(centerX + delta, centerY + delta, delta,  Seq(b))
+
+        Fork(nw, ne, sw, se)
+
+
       }else
         Leaf(centerX, centerY, size, bodies ++ Seq[Body](b))
 
@@ -168,15 +208,32 @@ package object barneshut {
     val matrix = new Array[ConcBuffer[Body]](sectorPrecision * sectorPrecision)
     for (i <- 0 until matrix.length) matrix(i) = new ConcBuffer
 
+    def scale(n: Float, min : Float, max : Float) :Float = {
+      if(n < min) {
+        return min
+      }
+      if(n>max){
+        return max
+      }
+      n
+    }
     def +=(b: Body): SectorMatrix = {
 
+      val scaledy = scale(b.y, boundaries.minY, boundaries.maxY) / sectorSize
+      val scaledx = scale(b.x, boundaries.minX, boundaries.maxX) / sectorSize
+
+      val position =  (Math.floor(scaledy) * sectorPrecision + Math.floor(scaledx)).toInt
+      val buffer = new ConcBuffer[Body]
+      buffer += b
+      matrix.update(position, buffer)
       this
     }
 
     def apply(x: Int, y: Int) = matrix(y * sectorPrecision + x)
 
     def combine(that: SectorMatrix): SectorMatrix = {
-      ???
+      for (i <- 0 until matrix.length) matrix.update(i, that.matrix(i))
+      this
     }
 
     def toQuad(parallelism: Int): Quad = {
