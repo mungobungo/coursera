@@ -55,10 +55,10 @@ import FloatOps._
     val quad = Fork(nw, ne, sw, se)
     assert(quad.centerX == 20f, s"${quad.centerX} should be 20f")
     assert(quad.centerY == 30f, s"${quad.centerY} should be 30f")
-    assert(quad.mass ~= 0, s"${quad.mass} should be 123f")
-    assert(quad.massX ~= 0, s"${quad.massX} should be 18f")
-    assert(quad.massY ~= 0, s"${quad.massY} should be 26f")
-    assert(quad.total == 0, s"${quad.total} should be 1")
+    assert(quad.mass ~= 0, s"${quad.mass} should be 0f")
+    assert(quad.massX ~= 20, s"${quad.massX} should be 20f")
+    assert(quad.massY ~= 30, s"${quad.massY} should be 30f")
+    assert(quad.total == 0, s"${quad.total} should be 0")
   }
   test("Fork with 3 empty quadrants and 1 leaf (sw)") {
     val b = new Body(123f, 18f, 26f, 0f, 0f)
@@ -113,111 +113,7 @@ import FloatOps._
   }
 
 
-//    [Test Description] Leaf.insert(b) should return a new Fork if size > minimumSize
-//    [Observed Error] FloatOps.DoubleOps(centerX.toDouble).~=(17.5) was false
-//    [Lost Points] 2
 
-//    [Test Description] Fork with 4 empty quadrants
-//    [Observed Error] 0.0 did not equal 20.0 0.0 should be 20f
-//  [Lost Points] 2
-//
-//    [Test Description] Body.updated should consider a Fork as opaque if it is far away
-//    [Observed Error] FloatOps.DoubleOps(body.xspeed.toDouble).~=(-0.33580848574638367) was false xspeed was -0.34836838
-//    [Lost Points] 2
-
-  //    [Test Description] Fork.insert(b) should insert recursively in the appropriate quadrant
-  //    [Observed Error] Fork(Empty(10.0,30.0,10.0),
-  //                          Leaf(20.0,30.0,10.0,List(barneshut.package$Body@31c88ec8)),
-  //                          Empty(10.0,40.0,10.0),
-  //                          Empty(24.5,25.5,10.0))
-  // should be a Fork where only ne changed
-  //    [Lost Points] 2
-
-//    [Test Description] 'insert' should work correctly on a leaf with center (1,1) and size 2
-//  [Observed Error] Fork(Leaf(0.0,0.0,1.0,List(barneshut.package$Body@647e447)),
-  //                      Empty(2.0,0.0,1.0),
-  //                      Empty(0.0,2.0,1.0),
-  //                      Empty(2.0,2.0,1.0)) did not equal
-  //
-  //                 Fork(Leaf(0.5,0.5,1.0,List(barneshut.package$Body@3427b02d)),
-  //                      Leaf(1.5,0.5,1.0,List(barneshut.package$Body@647e447)),
-  //                      Empty(0.5,1.5,1.0),
-  //                      Empty(1.5,1.5,1.0)) expected
-  //
-  //
-  //              Fork(Leaf(0.5,0.5,1.0,List(barneshut.package$Body@3427b02d)),
-  //                    Leaf(1.5,0.5,1.0,List(barneshut.package$Body@647e447)),
-  //                    Empty(0.5,1.5,1.0),
-  //                    Empty(1.5,1.5,1.0))
-  // found
-  //               Fork(Leaf(0.0,0.0,1.0,List(barneshut.package$Body@647e447)),
-  //                    Empty(2.0,0.0,1.0),
-       //               Empty(0.0,2.0,1.0),
-  //                    Empty(2.0,2.0,1.0))
-//  [Lost Points] 2
-//
-//    [Test Description] 'SectorMatrix.combine' should correctly combine two sector matrices of size 96 that contain some points in the same sector
-//    [Observed Error] ConcBuffer(barneshut.package$Body@42e99e4a) had size 1 instead of expected size 2 bucket (1,4) should have size 2
-//    [Lost Points] 2
-
-  //    [Test Description] Body.updated should consider a Fork as opaque if it is far away
-//    [Observed Error] FloatOps.DoubleOps(body.xspeed.toDouble).~=(-0.33580848574638367) was false xspeed was -0.34836838
-//    [Lost Points] 2
-//
-//  [Test Description] 'mergeBoundaries' should correctly merge two boundaries
-//    [Observed Error] an implementation is missing
-//    [exception was thrown] detailed error message in debug output section below
-//    [Lost Points] 2
-//
-
-//  [Test Description] computeSectorMatrix should be parallel
-//    [Observed Error] an implementation is missing
-//    [exception was thrown] detailed error message in debug output section below
-//    [Lost Points] 2
-//
-
-//
-//    [Test Description] 'computeSectorMatrix' should correctly work given 5 points within a boundary of size 96 when some points map to the same sector
-//    [Observed Error] an implementation is missing
-//    [exception was thrown] detailed error message in debug output section below
-//    [Lost Points] 2
-//
-//    [Test Description] 'updateBoundaries' should correctly update the boundary given a body at (3,5)
-//    [Observed Error] an implementation is missing
-//    [exception was thrown] detailed error message in debug output section below
-//    [Lost Points] 2
-//
-//  [Test Description] 'SectorMatrix.combine' should correctly combine two sector matrices of size 96 that contain some points in the same sector
-//    [Observed Error] ConcBuffer(barneshut.package$Body@4d9e68d0) had size 1 instead of expected size 2 bucket (1,4) should have size 2
-//    [Lost Points] 2
-//
-//    [Test Description] updateBodies should correctly update all bodies wrt to a Quad
-//    [Observed Error] an implementation is missing
-//    [exception was thrown] detailed error message in debug output section below
-//    [Lost Points] 2
-//
-//  [Test Description] 'SectorMatrix.+=' should add a body at (25,47) to the correct bucket of a sector matrix of size 100
-//  [Observed Error] res was false Body not found in the right sector. Hint: sector sizes could be fractions
-//    [Lost Points] 2
-//
-//  [Test Description] 'SectorMatrix.combine' should correctly combine two sector matrices of size 96 containing points: (12, 34), (23, 45), (56, 9), (8, 79), (5, 99)
-//    [Observed Error] res was false Body 2 not found in the right sector in combined sector matrix
-//    [Lost Points] 2
-//
-//    [Test Description] 'computeSectorMatrix' should correctly add points to buckets given 7 points within a boundary of size 96
-//    [Observed Error] an implementation is missing
-//    [exception was thrown] detailed error message in debug output section below
-//    [Lost Points] 2
-//
-//  [Test Description] updateBodies should be parallel
-//    [Observed Error] an implementation is missing
-//    [exception was thrown] detailed error message in debug output section below
-//    [Lost Points] 2
-//
-//    [Test Description] 'updateBoundaries' should correctly update the boundary when invoked repeatedly with points in the range (0,0) to (100,100)
-//    [Observed Error] an implementation is missing
-//    [exception was thrown] detailed error message in debug output section below
-//    [Lost Points] 2
 
   test("Fork with 3 empty quadrants and 1 leaf (nw)") {
     val b = new Body(123f, 18f, 26f, 0f, 0f)
@@ -288,6 +184,93 @@ import FloatOps._
     assert(res, s"Body not found in the right sector")
   }
 
+  //    [Test Description] 'SectorMatrix.combine' should correctly combine two sector matrices of size 96 that contain some points in the same sector
+  //    [Observed Error] ConcBuffer(barneshut.package$Body@42e99e4a) had size 1 instead of expected size 2 bucket (6,1) should have size 2
+  //    [Lost Points] 2
+  test("SectorMatrix.combine' should correctly combine two sector matrices of size 96 that contain some points in the same sector") {
+    val body = new Body(5, 25, 47, 0.1f, 0.1f)
+    val boundaries = new Boundaries()
+    boundaries.minX = 1
+    boundaries.minY = 1
+    boundaries.maxX = 97
+    boundaries.maxY = 97
+    val sm = new SectorMatrix(boundaries, SECTOR_PRECISION)
+    sm += body
+    val res = sm(2, 3).size == 1 && sm(2, 3).find(_ == body).isDefined
+    assert(res, s"Body not found in the right sector")
+
+    val body2 = new Body(5, 25.1f, 47.1f, 0.1f, 0.1f)
+    val boundaries2 = new Boundaries()
+    boundaries2.minX = 1
+    boundaries2.minY = 1
+    boundaries2.maxX = 97
+    boundaries2.maxY = 97
+    val sm2 = new SectorMatrix(boundaries2, SECTOR_PRECISION)
+    sm2 += body2
+    val res2 = sm2(2, 3).size == 1 && sm2(2, 3).find(_ == body2).isDefined
+    assert(res2, s"Body not found in the right sector")
+
+    val combined = sm.combine(sm2)
+    assert(2 == combined.apply(2,3).size)
+    assert(0 == combined.apply(4,3).size)
+  }
+
+
+  test("Leaf.insert(b) should return a new Fork if size > minimumSize 2") {
+    val b = new Body(123f, 18f, 26f, 0f, 0f)
+
+    val ne = Empty(15f, 25f, 5f)
+    val nw = Empty(20f, 25f, 5f)
+    val se = Empty(15f, 30f, 5f)
+    val sw = Empty(20f, 30f, 5f)
+    val quad = Fork(nw.insert(b), ne, sw, se)
+
+    assert(quad.centerX == 22.5f, s"${quad.centerX} should be 22.5f")
+    assert(quad.centerY == 27.5f, s"${quad.centerY} should be 30f")
+    assert(quad.mass ~= 123f, s"${quad.mass} should be 123f")
+    assert(quad.massX ~= 18f, s"${quad.massX} should be 18f")
+    assert(quad.massY ~= 26f, s"${quad.massY} should be 26f")
+    assert(quad.total == 1, s"${quad.total} should be 1")
+  }
+//
+//    [Test Description] Leaf.insert(b) should return a new Fork if size > minimumSize
+//    [Observed Error] nw of the Fork, Empty(15.0,25.0,5.0), should be a Leaf
+//    [Lost Points] 2
+//
+//    [Test Description] computeSectorMatrix should be parallel
+//    [Observed Error] 72
+//  [exception was thrown] detailed error message in debug output section below
+//    [Lost Points] 2
+//
+//    [Test Description] Fork.insert(b) should insert recursively in the appropriate quadrant
+//    [Observed Error] Fork(Empty(10.0,30.0,10.0),Leaf(20.0,30.0,10.0,List(barneshut.package$Body@6a400542)),Empty(10.0,40.0,10.0),Fork(Empty(15.0,35.0,5.0),Empty(25.0,35.0,5.0),Empty(15.0,45.0,5.0),Leaf(25.0,45.0,5.0,List(barneshut.package$Body@6580cfdd)))) should be a Fork where only ne changed
+//    [Lost Points] 2
+//
+//    [Test Description] 'computeSectorMatrix' should correctly work given 5 points within a boundary of size 96 when some points map to the same sector
+//    [Observed Error] 84
+//    [exception was thrown] detailed error message in debug output section below
+//    [Lost Points] 2
+//
+//  [Test Description] 'insert' should work correctly on a leaf with center (1,1) and size 2
+//  [Observed Error] Fork(Empty(0.0,0.0,1.0),Empty(2.0,0.0,1.0),Empty(0.0,2.0,1.0),Leaf(2.0,2.0,1.0,List(barneshut.package$Body@9353778))) did not equal Fork(Leaf(0.5,0.5,1.0,List(barneshut.package$Body@63355449)),Leaf(1.5,0.5,1.0,List(barneshut.package$Body@9353778)),Empty(0.5,1.5,1.0),Empty(1.5,1.5,1.0)) expected Fork(Leaf(0.5,0.5,1.0,List(barneshut.package$Body@63355449)),Leaf(1.5,0.5,1.0,List(barneshut.package$Body@9353778)),Empty(0.5,1.5,1.0),Empty(1.5,1.5,1.0)) found Fork(Empty(0.0,0.0,1.0),Empty(2.0,0.0,1.0),Empty(0.0,2.0,1.0),Leaf(2.0,2.0,1.0,List(barneshut.package$Body@9353778)))
+//  [Lost Points] 2
+//
+//    [Test Description] 'SectorMatrix.combine' should correctly combine two sector matrices of size 96 that contain some points in the same sector
+//    [Observed Error] ConcBuffer(barneshut.package$Body@42e99e4a) had size 1 instead of expected size 2 bucket (6,1) should have size 2
+//    [Lost Points] 2
+//
+//  [Test Description] 'SectorMatrix.+=' should add a body at (25,47) to the correct bucket of a sector matrix of size 100
+//  [Observed Error] res was false Body not found in the right sector. Hint: sector sizes could be fractions
+//    [Lost Points] 2
+//
+//  [Test Description] 'SectorMatrix.combine' should correctly combine two sector matrices of size 96 containing points: (12, 34), (23, 45), (56, 9), (8, 79), (5, 99)
+//    [Observed Error] res was false Body 3 not found in the right sector in combined sector matrix
+//    [Lost Points] 2
+//
+//    [Test Description] 'computeSectorMatrix' should correctly add points to buckets given 7 points within a boundary of size 96
+//    [Observed Error] 72
+//  [exception was thrown] detailed error message in debug output section below
+//    [Lost Points] 2
 }
 
 object FloatOps {

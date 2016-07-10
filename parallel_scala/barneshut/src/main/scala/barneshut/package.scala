@@ -59,11 +59,11 @@ package object barneshut {
     val size: Float = nw.size * 2
     val mass: Float = ne.mass + nw.mass + se.mass + sw.mass
     val massX: Float = if(mass == 0)
-                          0
+                          centerX
                       else
                          (ne.massX * ne.mass + nw.massX * nw.mass + sw.massX * sw.mass + se.massX * se.mass) /mass
     val massY: Float = if(mass == 0)
-                        0
+                        centerY
                       else
                         (ne.massY * ne.mass + nw.massY * nw.mass + sw.massY * sw.mass + se.massY * se.mass) /mass
     val total: Int = nw.total + ne.total + se.total + sw.total
@@ -168,6 +168,7 @@ package object barneshut {
          * To decrease the effect of this gravitational slingshot, as a very
          * simple approximation, we ignore gravity at extreme proximities.
          */
+
         if (dist > 1f) {
           val dforce = force(mass, thatMass, dist)
           val xn = (thatMassX - x) / dist
@@ -177,6 +178,7 @@ package object barneshut {
           netforcex += dforcex
           netforcey += dforcey
         }
+
       }
 
       def traverse(quad: Quad): Unit = (quad: Quad) match {
@@ -189,7 +191,13 @@ package object barneshut {
           parallel(traverse(nw), traverse(ne), traverse(sw), traverse(se))
       }
 
-      traverse(quad)
+
+      //if(quad.size / distance(quad.massX, quad.massY, x,y) <= theta) {
+        traverse(quad)
+      //}else
+       // {
+       //   quad.
+       // }
 
       val nx = x + xspeed * delta
       val ny = y + yspeed * delta
@@ -222,17 +230,20 @@ package object barneshut {
       val scaledy = scale(b.y, boundaries.minY, boundaries.maxY) / sectorSize
       val scaledx = scale(b.x, boundaries.minX, boundaries.maxX) / sectorSize
 
-      val position =  (Math.floor(scaledy) * sectorPrecision + Math.floor(scaledx)).toInt
-      val buffer = new ConcBuffer[Body]
-      buffer += b
-      matrix.update(position, buffer)
+      val position =  (Math.floor(scaledy) * sectorSize + Math.floor(scaledx)).toInt
+
+      val upd = matrix(position).+=(b)
+      matrix.update(position, upd)
       this
     }
 
-    def apply(x: Int, y: Int) = matrix(y * sectorPrecision + x)
+    def apply(x: Int, y: Int) = matrix(y * Math.floor(sectorSize).toInt + x)
 
     def combine(that: SectorMatrix): SectorMatrix = {
-      for (i <- 0 until matrix.length) matrix.update(i, that.matrix(i))
+      for (i <- 0 until matrix.length) {
+        val joined = matrix(i).combine(that.matrix(i))
+        matrix.update(i, joined)
+      }
       this
     }
 

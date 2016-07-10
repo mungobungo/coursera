@@ -12,11 +12,34 @@ import common._
 class Simulator(val taskSupport: TaskSupport, val timeStats: TimeStatistics) {
 
   def updateBoundaries(boundaries: Boundaries, body: Body): Boundaries = {
-    ???
+    if(body.x <= boundaries.maxX && body.x >= boundaries.minX && body.y <= boundaries.maxY && body.y >= boundaries.minY) {
+      return boundaries
+    }
+
+    val minx = Math.min(boundaries.minX, body.x)
+    val miny = Math.min(boundaries.minY, body.y)
+    val maxx = Math.max(boundaries.maxX, body.x)
+    val maxy = Math.max(boundaries.maxY, body.y)
+    val res = new Boundaries()
+    res.minX = minx
+    res.maxX = maxx
+    res.minY = miny
+    res.maxY = maxy
+    res
+
   }
 
   def mergeBoundaries(a: Boundaries, b: Boundaries): Boundaries = {
-    ???
+    val minx = Math.min(a.minX, b.minX)
+    val miny = Math.min(a.minY, b.minY)
+    val maxx = Math.max(a.maxX, b.maxX)
+    val maxy = Math.max(a.maxY, b.maxY)
+    val res = new Boundaries()
+    res.minX = minx
+    res.maxX = maxx
+    res.minY = miny
+    res.maxY = maxy
+    res
   }
 
   def computeBoundaries(bodies: Seq[Body]): Boundaries = timeStats.timed("boundaries") {
@@ -28,7 +51,8 @@ class Simulator(val taskSupport: TaskSupport, val timeStats: TimeStatistics) {
   def computeSectorMatrix(bodies: Seq[Body], boundaries: Boundaries): SectorMatrix = timeStats.timed("matrix") {
     val parBodies = bodies.par
     parBodies.tasksupport = taskSupport
-    ???
+    val res = new SectorMatrix(boundaries, SECTOR_PRECISION)
+    parBodies.foldLeft(res)((s,b) => s.+=(b))
   }
 
   def computeQuad(sectorMatrix: SectorMatrix): Quad = timeStats.timed("quad") {
@@ -38,7 +62,7 @@ class Simulator(val taskSupport: TaskSupport, val timeStats: TimeStatistics) {
   def updateBodies(bodies: Seq[Body], quad: Quad): Seq[Body] = timeStats.timed("update") {
     val parBodies = bodies.par
     parBodies.tasksupport = taskSupport
-    ???
+    parBodies.map(b=> b.updated(quad)).seq
   }
 
   def eliminateOutliers(bodies: Seq[Body], sectorMatrix: SectorMatrix, quad: Quad): Seq[Body] = timeStats.timed("eliminate") {
