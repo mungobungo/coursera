@@ -232,7 +232,25 @@ import FloatOps._
     assert(quad.massY ~= 26f, s"${quad.massY} should be 26f")
     assert(quad.total == 1, s"${quad.total} should be 1")
   }
-//
+
+  //  [Test Description] 'insert' should work correctly on a leaf with center (1,1) and size 2
+  //  [Observed Error]
+  //  expected
+  //     Fork(
+  //           Leaf(0.5,0.5,1.0,List(barneshut.package$Body@63355449)),
+  //           Leaf(1.5,0.5,1.0,List(barneshut.package$Body@9353778)),
+  //           Empty(0.5,1.5,1.0),
+  //           Empty(1.5,1.5,1.0))
+  //
+  // found
+  //     Fork(
+  //           Empty(0.0,0.0,1.0),
+  //           Empty(2.0,0.0,1.0),
+  //           Empty(0.0,2.0,1.0),
+  //           Leaf(2.0,2.0,1.0,List(barneshut.package$Body@9353778)))
+  //  [Lost Points] 2
+
+  //
 //    [Test Description] Leaf.insert(b) should return a new Fork if size > minimumSize
 //    [Observed Error] nw of the Fork, Empty(15.0,25.0,5.0), should be a Leaf
 //    [Lost Points] 2
@@ -251,9 +269,7 @@ import FloatOps._
 //    [exception was thrown] detailed error message in debug output section below
 //    [Lost Points] 2
 //
-//  [Test Description] 'insert' should work correctly on a leaf with center (1,1) and size 2
-//  [Observed Error] Fork(Empty(0.0,0.0,1.0),Empty(2.0,0.0,1.0),Empty(0.0,2.0,1.0),Leaf(2.0,2.0,1.0,List(barneshut.package$Body@9353778))) did not equal Fork(Leaf(0.5,0.5,1.0,List(barneshut.package$Body@63355449)),Leaf(1.5,0.5,1.0,List(barneshut.package$Body@9353778)),Empty(0.5,1.5,1.0),Empty(1.5,1.5,1.0)) expected Fork(Leaf(0.5,0.5,1.0,List(barneshut.package$Body@63355449)),Leaf(1.5,0.5,1.0,List(barneshut.package$Body@9353778)),Empty(0.5,1.5,1.0),Empty(1.5,1.5,1.0)) found Fork(Empty(0.0,0.0,1.0),Empty(2.0,0.0,1.0),Empty(0.0,2.0,1.0),Leaf(2.0,2.0,1.0,List(barneshut.package$Body@9353778)))
-//  [Lost Points] 2
+
 //
 //    [Test Description] 'SectorMatrix.combine' should correctly combine two sector matrices of size 96 that contain some points in the same sector
 //    [Observed Error] ConcBuffer(barneshut.package$Body@42e99e4a) had size 1 instead of expected size 2 bucket (6,1) should have size 2

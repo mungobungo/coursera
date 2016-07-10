@@ -69,6 +69,9 @@ package object barneshut {
     val total: Int = nw.total + ne.total + se.total + sw.total
 
     def insert(b: Body): Fork = {
+      if(size > minimumSize){
+        Leaf(centerX, centerY, size, Seq(b))
+      }
       if(b.x <= centerX && b.y <= centerY)
         Fork(nw.insert(b), ne, sw, se)
       if(b.x > centerX && b.y <= centerY)
@@ -84,56 +87,40 @@ package object barneshut {
   case class Leaf(centerX: Float, centerY: Float, size: Float, bodies: Seq[Body])
   extends Quad {
     val (mass, massX, massY) = {
-      val m = bodies.foldLeft(0f)((a,x)=> x.mass + a)
-      val mx = bodies.foldLeft(0f)((a,x)=> x.mass * x.x + a) /m
-      val my = bodies.foldLeft(0f)((a,x)=> x.mass * x.y + a) /m
+      val m = bodies.foldLeft(0f)((a, x) => x.mass + a)
+      val mx = bodies.foldLeft(0f)((a, x) => x.mass * x.x + a) / m
+      val my = bodies.foldLeft(0f)((a, x) => x.mass * x.y + a) / m
       (m, mx, my)
     }
     val total: Int = bodies.length
+
     def insert(b: Body): Quad =
-      if(size > minimumSize) {
-
-
-        val delta = size/2
-        if(b.x < centerX && b.y < centerY) {
-          val nw = Leaf(centerX - delta, centerY - delta, delta, Seq(b))
-          val ne = Empty(centerX + delta, centerY - delta, delta)
-          val sw = Empty(centerX - delta, centerY + delta, delta)
-          val se = Empty(centerX + delta, centerY + delta, delta)
-
-          Fork(nw, ne, sw, se)
-        }
-
-        if(b.x >= centerX && b.y < centerY) {
-          val nw = Empty(centerX - delta, centerY - delta, delta)
-          val ne = Leaf(centerX + delta, centerY - delta, delta, Seq(b))
-          val sw = Empty(centerX - delta, centerY + delta, delta)
-          val se = Empty(centerX + delta, centerY + delta, delta)
-
-          Fork(nw, ne, sw, se)
-        }
-        if(b.x < centerX && b.y >= centerY) {
-          val nw = Empty(centerX - delta, centerY - delta, delta)
-          val ne = Empty(centerX + delta, centerY - delta, delta)
-          val sw = Leaf(centerX - delta, centerY + delta, delta,  Seq(b))
-          val se = Empty(centerX + delta, centerY + delta, delta)
-
-          Fork(nw, ne, sw, se)
-        }
-
+      if (size >= minimumSize) {
+        val delta = size / 2
         val nw = Empty(centerX - delta, centerY - delta, delta)
         val ne = Empty(centerX + delta, centerY - delta, delta)
         val sw = Empty(centerX - delta, centerY + delta, delta)
-        val se = Leaf(centerX + delta, centerY + delta, delta,  Seq(b))
+        val se = Empty(centerX + delta, centerY + delta, delta)
 
-        Fork(nw, ne, sw, se)
+        if (b.x < centerX && b.y < centerY) {
+          Fork(nw.insert(b), ne, sw, se)
+        }
+
+        if (b.x >= centerX && b.y < centerY) {
+          Fork(nw, ne.insert(b), sw, se)
+        }
+
+        if (b.x < centerX && b.y >= centerY) {
+          Fork(nw, ne, sw.insert(b), se)
+        }
+
+        Fork(nw, ne, sw, se.insert(b))
 
 
-      }else
+      } else
         Leaf(centerX, centerY, size, bodies ++ Seq[Body](b))
-
-
   }
+
 
   def minimumSize = 0.00001f
 
