@@ -96,29 +96,29 @@ package object barneshut {
 
     def insert(b: Body): Quad =
       if (size > minimumSize) {
-        val delta = size / 2
-        val nw = Empty(centerX - delta, centerY - delta, delta)
-        val ne = Empty(centerX + delta, centerY - delta, delta)
-        val sw = Empty(centerX - delta, centerY + delta, delta)
-        val se = Empty(centerX + delta, centerY + delta, delta)
-
+        val delta = size / 4
+        val nw = Empty(centerX - delta, centerY - delta, size/2)
+        val ne = Empty(centerX + delta, centerY - delta, size/2)
+        val sw = Empty(centerX - delta, centerY + delta, size/2)
+        val se = Empty(centerX + delta, centerY + delta,  size/2)
+        val current = Leaf(nw.centerX, nw.centerY, nw.size, bodies)
         if (b.x < centerX && b.y < centerY) {
-          Fork(nw.insert(b), ne, sw, se)
+          return Fork(current.insert(b), ne, sw, se)
         }
 
         if (b.x >= centerX && b.y < centerY) {
-          Fork(nw, ne.insert(b), sw, se)
+          return Fork(current, ne.insert(b), sw, se)
         }
 
         if (b.x < centerX && b.y >= centerY) {
-          Fork(nw, ne, sw.insert(b), se)
+          return Fork(current, ne, sw.insert(b), se)
         }
 
-        Fork(nw, ne, sw, se.insert(b))
+        return Fork(current, ne, sw, se.insert(b))
 
 
       } else
-        Leaf(centerX, centerY, size, bodies ++ Seq[Body](b))
+        return Leaf(centerX, centerY, size, bodies ++ Seq[Body](b))
   }
 
 

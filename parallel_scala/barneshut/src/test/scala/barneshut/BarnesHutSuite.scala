@@ -217,9 +217,9 @@ import FloatOps._
 
 
   test("Leaf.insert(b) should return a new Fork if size > minimumSize 2") {
-    val b = new Body(123f, 18f, 26f, 0f, 0f)
+    val b = new Body(123f, 11, 6f, 0f, 0f)
     val nw = Leaf(15f, 25f, 5f, Seq(b))
-    val b2 = new Body(123f, 18.1f, 26.1f, 0f, 0f)
+    val b2 = new Body(123f, 1.1f, 6.1f, 0f, 0f)
     val ne = Empty(20f, 25f, 5f)
     val sw = Empty(15f, 30f, 5f)
     val se = Empty(20f, 30f, 5f)
@@ -349,6 +349,8 @@ import FloatOps._
 
 
   }
+
+
   //  [Test Description] 'insert' should work correctly on a leaf with center (1,1) and size 2
   //  [Observed Error]
   //  expected
@@ -365,6 +367,21 @@ import FloatOps._
   //           Empty(0.0,2.0,1.0),
   //           Leaf(2.0,2.0,1.0,List(barneshut.package$Body@9353778)))
   //  [Lost Points] 2
+
+  test("Leaf.insert(b) should return a new Fork if size > minimumSize 3") {
+    val b = new Body(123f, 0.5f, 0.5f, 0f, 0f)
+    val leaf = Leaf(1, 1, 2, Seq(b))
+    val b2 = new Body(123f, 1.6f, 0.6f, 0f, 0f)
+
+    val quad = leaf.insert(b2)
+
+    assert(quad.centerX == 22.5f, s"${quad.centerX} should be 22.5f")
+    assert(quad.centerY == 27.5f, s"${quad.centerY} should be 30f")
+    assert(quad.mass ~= 123f, s"${quad.mass} should be 123f")
+    assert(quad.massX ~= 18f, s"${quad.massX} should be 18f")
+    assert(quad.massY ~= 26f, s"${quad.massY} should be 26f")
+    assert(quad.total == 1, s"${quad.total} should be 1")
+  }
 
   //
 //    [Test Description] Leaf.insert(b) should return a new Fork if size > minimumSize
