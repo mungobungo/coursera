@@ -95,7 +95,7 @@ package object barneshut {
     val total: Int = bodies.length
 
     def insert(b: Body): Quad =
-      if (size >= minimumSize) {
+      if (size > minimumSize) {
         val delta = size / 2
         val nw = Empty(centerX - delta, centerY - delta, delta)
         val ne = Empty(centerX + delta, centerY - delta, delta)
@@ -214,8 +214,14 @@ package object barneshut {
     }
     def +=(b: Body): SectorMatrix = {
 
-      val scaledy = scale(b.y, boundaries.minY, boundaries.maxY) / sectorSize
-      val scaledx = scale(b.x, boundaries.minX, boundaries.maxX) / sectorSize
+      var scaledy = scale(b.y, boundaries.minY, boundaries.maxY) / sectorSize
+      if(scaledy == sectorPrecision)
+        scaledy -= 1
+
+      var scaledx = scale(b.x, boundaries.minX, boundaries.maxX) / sectorSize
+
+      if(scaledx == sectorPrecision)
+        scaledx -=1
 
       val position =  (Math.floor(scaledy) * sectorPrecision + Math.floor(scaledx)).toInt
 
@@ -228,10 +234,16 @@ package object barneshut {
       matrix(y * Math.floor(sectorPrecision).toInt + x)
 
     def combine(that: SectorMatrix): SectorMatrix = {
-      for (i <- matrix.indices) {
+      parallel(
+      {for (i <- matrix.indices.par) {
         val joined = matrix(i).combine(that.matrix(i))
         matrix.update(i, joined)
-      }
+      }},
+        {
+          for (i <- matrix.indices.par) {
+            val joined = matrix(i).combine(that.matrix(i))
+            matrix.update(i, joined)
+        }})
       this
     }
 

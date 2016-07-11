@@ -218,11 +218,11 @@ import FloatOps._
 
   test("Leaf.insert(b) should return a new Fork if size > minimumSize 2") {
     val b = new Body(123f, 18f, 26f, 0f, 0f)
-
-    val ne = Empty(15f, 25f, 5f)
-    val nw = Empty(20f, 25f, 5f)
-    val se = Empty(15f, 30f, 5f)
-    val sw = Empty(20f, 30f, 5f)
+    val nw = Leaf(15f, 25f, 5f, Seq(b))
+    val b2 = new Body(123f, 18.1f, 26.1f, 0f, 0f)
+    val ne = Empty(20f, 25f, 5f)
+    val sw = Empty(15f, 30f, 5f)
+    val se = Empty(20f, 30f, 5f)
     val quad = Fork(nw.insert(b), ne, sw, se)
 
     assert(quad.centerX == 22.5f, s"${quad.centerX} should be 22.5f")
@@ -249,6 +249,104 @@ import FloatOps._
     sm += body
     val res = sm(2, 4).size == 1 && sm(2, 4).exists(_ == body)
     assert(res, s"Body not found in the right sector")
+
+  }
+
+  test("'SectorMatrix.+=' should add a body at (5,5) to the correct bucket of a sector matrix of size 4") {
+    val body = new Body(5, 2, 6, 0.1f, 0.1f)
+    val boundaries = new Boundaries()
+    boundaries.minX = 1
+    boundaries.minY = 1
+    boundaries.maxX = 9
+    boundaries.maxY = 9
+    val sm = new SectorMatrix(boundaries, 2)
+    sm += body
+    val res = sm(0, 1).size == 1 && sm(0, 1).exists(_ == body)
+    assert(res, s"Body not found in the right sector")
+
+  }
+
+  test("'SectorMatrix.+=' should add a body at (25,47) to the correct bucket of a sector matrix of size 100 fractional") {
+    val body = new Body(5, 25, 47, 0.1f, 0.1f)
+    val boundaries = new Boundaries()
+    boundaries.minX = 0
+    boundaries.minY = 0
+    boundaries.maxX = 51
+    boundaries.maxY = 51
+    val sm = new SectorMatrix(boundaries, 10)
+    sm += body
+    val res = sm(4, 9).size == 1 && sm(4, 9).exists(_ == body)
+    assert(res, s"Body not found in the right sector")
+
+  }
+
+  test("'SectorMatrix.join' big join test") {
+
+    val boundaries = new Boundaries()
+    boundaries.minX = 0
+    boundaries.minY = 0
+    boundaries.maxX = 8
+    boundaries.maxY = 8
+    val sm = new SectorMatrix(boundaries, 4)
+    val body1 = new Body(5, 3, 3, 0.1f, 0.1f)
+    val body2 = new Body(5, 5.5f, 4.5f, 0.1f, 0.1f)
+    val body3 = new Body(5, 4.5f, 5.5f, 0.1f, 0.1f)
+    val body4 = new Body(5, 1, 7, 0.1f, 0.1f)
+    val body5 = new Body(5, 7, 7, 0.1f, 0.1f)
+    val body6 = new Body(5, 7.5f, 7.5f, 0.1f, 0.1f)
+    sm += body1
+    sm += body2
+    sm += body3
+    sm += body4
+    sm += body5
+    sm += body6
+    val res1 = sm(1, 1).size == 1 && sm(1, 1).exists(_ == body1)
+    assert(res1, s"Body1 not found in the right sector")
+    val res2 = sm(2, 2).size == 2 && sm(2, 2).exists(_ == body2)
+    assert(res2, s"Body2 not found in the right sector")
+    val res3 = sm(2, 2).size == 2 && sm(2, 2).exists(_ == body3)
+    assert(res3, s"Body3 not found in the right sector")
+    val res4 = sm(0, 3).size == 1 && sm(0, 3).exists(_ == body4)
+    assert(res4, s"Body4 not found in the right sector")
+    val res5 = sm(3, 3).size == 2 && sm(3, 3).exists(_ == body5)
+    assert(res5, s"Body5 not found in the right sector")
+    val res6 = sm(3, 3).size == 2 && sm(3, 3).exists(_ == body6)
+    assert(res6, s"Body6 not found in the right sector")
+
+    val sm2 = new SectorMatrix(boundaries, 4)
+    val body7 = new Body(5, 7, 0, 0.1f, 0.1f)
+    val body8 = new Body(5, 1.1f, 6.3f, 0.1f, 0.1f)
+    val body9 = new Body(5, 99f, 99f, 0.1f, 0.1f)
+    sm2 += body7
+    sm2 += body8
+    sm2 += body9
+    val res7 = sm2(3, 0).size == 1 && sm2(3, 0).exists(_ == body7)
+    assert(res7, s"Body7 not found in the right sector")
+    val res8 = sm2(0, 3).size == 1 && sm2(0, 3).exists(_ == body8)
+    assert(res8, s"Body8 not found in the right sector")
+    val res9 = sm2(3, 3).size == 1 && sm2(3, 3).exists(_ == body9)
+    assert(res9, s"Body9 not found in the right sector")
+
+    val joined = sm.combine(sm2)
+    val j1 = joined(1, 1).size == 1 && joined(1, 1).exists(_ == body1)
+    assert(j1, s"Body1 not found in the right sector")
+    val j2 = joined(2, 2).size == 2 && joined(2, 2).exists(_ == body2)
+    assert(j2, s"Body2 not found in the right sector")
+    val j3 = joined(2, 2).size == 2 && joined(2, 2).exists(_ == body3)
+    assert(j3, s"Body3 not found in the right sector")
+    val j4 = joined(0, 3).size == 2 && joined(0, 3).exists(_ == body4)
+    assert(j4, s"Body4 not found in the right sector")
+    val j5 = joined(3, 3).size == 3 && joined(3, 3).exists(_ == body5)
+    assert(j5, s"Body5 not found in the right sector")
+    val j6 = joined(3, 3).size == 3 && joined(3, 3).exists(_ == body6)
+    assert(j6, s"Body6 not found in the right sector")
+    val j7 = joined(3, 0).size == 1 && joined(3, 0).exists(_ == body7)
+    assert(j7, s"Body7 not found in the right sector")
+    val j8 = joined(0, 3).size == 2 && joined(0, 3).exists(_ == body8)
+    assert(j8, s"Body8 not found in the right sector")
+    val j9 = joined(3, 3).size == 3 && joined(3, 3).exists(_ == body9)
+    assert(j9, s"Body9 not found in the right sector")
+
 
   }
   //  [Test Description] 'insert' should work correctly on a leaf with center (1,1) and size 2
